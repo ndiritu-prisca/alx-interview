@@ -23,7 +23,8 @@ def nQueens(num, x=0, a=[], b=[], c=[]):
     if x < num:
         for j in range(num):
             if j not in a and x + j not in b and x - j not in c:
-                yield from nQueens(num, x + 1, a + [j], b + [x + j], c + [x - j])
+                yield from nQueens(
+                    num, x + 1, a + [j], b + [x + j], c + [x - j])
     else:
         yield a
 
