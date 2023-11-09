@@ -1,6 +1,6 @@
 #!/usr/bin/node
 
-const axios = require('axios');
+const request = require('request');
 const movieId = process.argv[2];
 
 function getMovieCharacters (movieId) {
@@ -10,34 +10,33 @@ function getMovieCharacters (movieId) {
   // Request to the /films endpoint to get the movie details
   const movieUrl = `${baseUrl}films/${movieId}/`;
 
-  axios.get(movieUrl)
-    .then(response => {
-      const movieData = response.data;
-      const characters = movieData.characters;
-
-      // Print the characters for the specified movie
-      const fetchCharacterData = characterUrl => {
-        axios.get(characterUrl)
-          .then(characterResponse => {
-            const characterData = characterResponse.data;
-            console.log(characterData.name);
-          })
-          // eslint-disable-next-line n/handle-callback-err
-          .catch(error => {
-            console.error(`Failed to retrieve character data for URL: ${characterUrl}`);
-          });
-      };
-
-      Promise.all(characters.map(fetchCharacterData))
-        // eslint-disable-next-line n/handle-callback-err
-        .catch(error => {
-          console.error(`Failed to retrieve movie data for Movie ID ${movieId}.`);
-        });
-    })
-    // eslint-disable-next-line n/handle-callback-err
-    .catch(error => {
+  request(movieUrl, (error, response, body) => {
+    if (error) {
       console.error(`Failed to retrieve movie data for Movie ID ${movieId}.`);
-    });
+      return;
+    }
+
+    const movieData = JSON.parse(body);
+    const characters = movieData.characters;
+
+    // Print the characters for the specified movie
+    const fetchCharacterData = characterUrl => {
+      request(characterUrl, (charError, charResponse, charBody) => {
+        if (charError) {
+          console.error(`Failed to retrieve character data for URL: ${characterUrl}`);
+          return;
+        }
+
+        const characterData = JSON.parse(charBody);
+        console.log(characterData.name);
+      });
+    };
+
+    Promise.all(characters.map(fetchCharacterData))
+      .catch(charError => {
+        console.error('Failed to retrieve character data for one or more characters.');
+      });
+  });
 }
 
 if (process.argv.length !== 3) {
