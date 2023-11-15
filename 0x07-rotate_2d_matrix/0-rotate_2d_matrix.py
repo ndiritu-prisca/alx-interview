@@ -1,8 +1,9 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 """Rotate 2d matrix"""
 
 
 def rotate_2d_matrix(matrix):
+    """Function that rotates a 2d matrix"""
     n = len(matrix)
 
     # Transposing matrix
