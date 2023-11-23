@@ -1,19 +1,20 @@
 #!/usr/bin/python3
-
+"""Module for makeChange"""
 
 def makeChange(coins, total):
+    """Function that returns number of coins to make change"""
     if total <= 0:
         return 0
 
-    coins_list = [float('inf')] * (total + 1)
-
-    coins_list[0] = 0
+    coins.sort(reverse=True)
+    num_coins = 0
 
     for coin in coins:
-        for i in range(coin, total + 1):
-            coins_list[i] = min(coins_list[i], coins_list[i - coin] + 1)
+        while total >= coin:
+            total -= coin
+            num_coins += 1
 
-    if coins_list[total] == float('inf'):
+    if total == 0:
+        return num_coins
+    else:
         return -1
-
-    return coins_list[total]
