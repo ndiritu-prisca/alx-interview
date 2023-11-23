@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Module for makeChange"""
 
+
 def makeChange(coins, total):
     """Function that returns number of coins to make change"""
     if total <= 0:
